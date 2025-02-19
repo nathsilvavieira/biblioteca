@@ -5,6 +5,7 @@ import com.sistema.biblioteca.DTO.UserDTO;
 import com.sistema.biblioteca.model.Users;
 import com.sistema.biblioteca.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,15 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDTO> findUserById(@PathVariable Long id){
+    public ResponseEntity<?> findUserById(@PathVariable Long id){
+        try{
+            UserDTO user = userService.findUserById(id);
+
+        } catch (RuntimeException e) {
+            if(e.getMessage().equals("not_found")){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado");
+            }
+        }
         return ResponseEntity.ok(userService.findUserById(id));
     }
 

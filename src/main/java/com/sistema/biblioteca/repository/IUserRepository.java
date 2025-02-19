@@ -14,4 +14,6 @@ public interface IUserRepository extends JpaRepository<Users, Long> {
     @Query("SELECT u FROM Users AS u WHERE u.status = 'Ativo' ORDER BY u.name ASC")
     List<Users> findByStatusActive();
 
+    // metodo busca que contem nome
+
 }

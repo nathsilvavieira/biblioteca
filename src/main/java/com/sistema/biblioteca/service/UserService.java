@@ -24,37 +24,40 @@ public class UserService {
     }
 
     public UserDTO findUserById(Long id){
-      Users user = userRepository.findById(id)
-              .orElseThrow(()-> new RuntimeException("Usuário não encontrado"));
-        return new UserDTO(user);
+      Optional<Users> user = userRepository.findById(id);
+      if(!user.isPresent()){
+          throw new RuntimeException("not_found");
+      }
+        return new UserDTO(user.get());
     }
 
-    public UserDTO saveUser(Users user){
+    public UserDTO saveUser(Users user){//create Request DTO
         user = userRepository.save(user);
-        return new UserDTO(user);
+        return new UserDTO(user); // Response user dto
     }
 
-    public UserDTO updateUser(Users user){
+    public UserDTO updateUser(Users user){//create Request DTO
         Users userUpdate = userRepository.findById(user.getId())
                 .orElseThrow(()-> new RuntimeException("Usuário não encontrado"));
 
-        if(userUpdate.getId().equals(user.getId())) {
+       // if(userUpdate.getId().equals(user.getId())) {
             userUpdate.setName(user.getName());
-            userUpdate.setDoc(user.getDoc());
-            userUpdate.setType_doc(user.getType_doc());
+            userUpdate.setDoc(user.getDoc()); //n faz sentido
+            userUpdate.setType_doc(user.getType_doc());//
             userUpdate.setEmail(user.getEmail());
             userUpdate.setTelephone(user.getTelephone());
-            userUpdate.setBirthdate(user.getBirthdate());
+            userUpdate.setBirthdate(user.getBirthdate());//
             userUpdate.setStatus(user.getStatus());
             userUpdate = userRepository.save(userUpdate);
-        }
-        return new UserDTO(userUpdate);
+        //}
+        return new UserDTO(userUpdate);// Response user dto
     }
 
     public void deleteUser(Long id){
         try{
+            //passar metodo finduser
             Optional<Users> user = userRepository.findById(id);
-            if(user.get().getStatus().contains("Ativo")){
+            if(user.get().getStatus().equals("Ativo")){
                 Users userDelete = user.get();
                 userDelete.setStatus("Inativo");
                 userRepository.save(userDelete);
