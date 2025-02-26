@@ -1,6 +1,7 @@
 package com.sistema.biblioteca.service;
 
-import com.sistema.biblioteca.DTO.UserDTO;
+import com.sistema.biblioteca.DTO.UserRequestDTO;
+import com.sistema.biblioteca.DTO.UserResponseDTO;
 import com.sistema.biblioteca.model.Users;
 import com.sistema.biblioteca.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,27 +17,45 @@ public class UserService {
     @Autowired
     private IUserRepository userRepository;
 
-    public List<UserDTO> findUserByStatusActive(){
+    public List<UserResponseDTO> findUserByStatusActive(){
         List<Users> userList = userRepository.findByStatusActive();
         return userList.stream()
-                .map(com.sistema.biblioteca.DTO.UserDTO::new)
+                .map(UserResponseDTO::new)
                 .collect(Collectors.toList());
     }
 
-    public UserDTO findUserById(Long id){
+    public UserResponseDTO findUserById(Long id){
       Optional<Users> user = userRepository.findById(id);
       if(!user.isPresent()){
           throw new RuntimeException("not_found");
       }
-        return new UserDTO(user.get());
+        return new UserResponseDTO(user.get());
     }
 
-    public UserDTO saveUser(Users user){//create Request DTO
-        user = userRepository.save(user);
-        return new UserDTO(user); // Response user dto
+    public List<UserResponseDTO> findByName(String name){
+        List<Users> userList  = userRepository.findByName(name);
+        if(userList.isEmpty()){
+            throw new RuntimeException("not_found");
+        }
+        return userList.stream()
+                .map(UserResponseDTO::new)
+                .collect(Collectors.toList());
     }
 
-    public UserDTO updateUser(Users user){//create Request DTO
+    public UserResponseDTO createUser(UserRequestDTO userDto){
+        Users users = new Users();//create Request DTO
+        users.setName(userDto.getName());
+        users.setEmail(userDto.getEmail());
+        users.setBirthdate(userDto.getBirthdate());
+        users.setTelephone(userDto.getTelephone());
+        users.setType_doc(userDto.getType_doc());
+        users.setDoc(userDto.getDoc());
+        users.setStatus(userDto.getStatus());
+        userRepository.save(users);
+        return new UserResponseDTO(users); // Response user dto
+    }
+
+    public UserResponseDTO updateUser(Users user){//create Request DTO
         Users userUpdate = userRepository.findById(user.getId())
                 .orElseThrow(()-> new RuntimeException("Usuário não encontrado"));
 
@@ -50,7 +69,7 @@ public class UserService {
             userUpdate.setStatus(user.getStatus());
             userUpdate = userRepository.save(userUpdate);
         //}
-        return new UserDTO(userUpdate);// Response user dto
+        return new UserResponseDTO(userUpdate);// Response user dto
     }
 
     public void deleteUser(Long id){
@@ -61,7 +80,7 @@ public class UserService {
                 Users userDelete = user.get();
                 userDelete.setStatus("Inativo");
                 userRepository.save(userDelete);
-                this.saveUser(userDelete);
+
             }
         } catch (RuntimeException e) {
             throw new RuntimeException("Id não corresponde a nenhum usuário");

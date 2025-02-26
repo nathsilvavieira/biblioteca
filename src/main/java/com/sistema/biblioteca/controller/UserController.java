@@ -1,7 +1,8 @@
 package com.sistema.biblioteca.controller;
 
 
-import com.sistema.biblioteca.DTO.UserDTO;
+import com.sistema.biblioteca.DTO.UserRequestDTO;
+import com.sistema.biblioteca.DTO.UserResponseDTO;
 import com.sistema.biblioteca.model.Users;
 import com.sistema.biblioteca.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +22,19 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UserDTO>> findUserByStatusActive(){
+    public ResponseEntity<List<UserResponseDTO>> findUserByStatusActive(){
         return ResponseEntity.ok(userService.findUserByStatusActive());
+    }
+
+    @GetMapping(value = "/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<UserResponseDTO>> findUserByName(@PathVariable String name){
+        return ResponseEntity.ok(userService.findByName(name));
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> findUserById(@PathVariable Long id){
         try{
-            UserDTO user = userService.findUserById(id);
+            UserResponseDTO user = userService.findUserById(id);
 
         } catch (RuntimeException e) {
             if(e.getMessage().equals("not_found")){
@@ -39,11 +45,11 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDTO saveUser(@RequestBody Users user){
-        return userService.saveUser(user);
+    public UserResponseDTO createUser(@RequestBody UserRequestDTO userRequestDTO){
+        return userService.createUser(userRequestDTO);
     }
    @PutMapping
-    public UserDTO updateUser(@RequestBody Users user){
+    public UserResponseDTO updateUser(@RequestBody Users user){
         return userService.updateUser(user);
     }
     @PostMapping("/{id}")

@@ -3,13 +3,13 @@ package com.sistema.biblioteca.DTO;
 
 import com.sistema.biblioteca.model.Users;
 
-public class UserDTO {
+public class UserResponseDTO {
 
     private Long id;
     private String name;
     private String status;
 
-    public UserDTO(Users user) {
+    public UserResponseDTO(Users user) {
         this.id = user.getId();
         this.name = user.getName();
         this.status = user.getStatus();

@@ -1,8 +1,9 @@
 package com.sistema.biblioteca.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+
+import jakarta.validation.constraints.*;
+
 
 import java.util.Date;
 import java.util.List;
@@ -16,27 +17,31 @@ public class Users {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name",nullable = false, length = 100)
+
     @NotBlank(message = "Não pode ser vazio")
     @Size(min=1,max=100)
     private String name;
 
-    @Column(name = "doc",nullable = false, length = 100)
+
+    @NotBlank(message = "Campo não pode ser vazio")
+    @Size(min=1,max=100)
     private String doc;
 
-    @Column(name = "type_doc",nullable = false, length = 50)
+    @NotBlank(message = "Campo não pode ser vazio")
+    @Size(min=1,max=50)
     private String type_doc;
 
-    @Column(name = "email",nullable = false, length = 100)
+    @NotBlank(message = "Campo não pode ser vazio")
+    @Size(min=1,max=100)
     private String email;
 
-    @Column(name = "telephone", length = 50)
+    @NotBlank(message = "Campo não pode ser vazio")
+    @Size(min=1,max=100)
     private String telephone;
 
-    @Column(name = "birthdate")
+    @Past
     private Date birthdate;
 
-    @Column(name="status")
     private String status;
 
     /**
